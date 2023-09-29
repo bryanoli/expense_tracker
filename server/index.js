@@ -3,58 +3,108 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const moment = require ('moment');
 const mongoose = require('mongoose');
+const Client=require('./mongodb')
 require('dotenv').config();
-
 const app = express();
 app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })) //Need it for time format
 
-const mongoURI = process.env.MONGODB_URI;
 
-const mongooseOptions = {
-  useNewUrlParser: true, // Use the new URL parser
-  useUnifiedTopology: true, // Use the new Server Discover and Monitoring engine
-};
+app.get("/",cors(), (req,res)=>{
 
-mongoose.connect(mongoURI, mongooseOptions)
-  .then(() => {
-    console.log('Connected to MongoDB Atlas');
-  })
-  .catch((error) => {
-    console.error('Error connecting to MongoDB Atlas:', error);
-  });
+})
 
-const db = mongoose.connection;
+app.get("/", (req,res)=>{
+  res.render("login");
+})
 
-let clientSchema = mongoose.Schema({
-  email: String,
-  password: String,
-  transactions: Array,
-  items: Array
-});
+app.get("/signup", (req,res)=>{
+  res.render("signup");
+})
 
-let Client = mongoose.model('Client', clientSchema);
-
-app.post('/login', (req, res) => {
-  let { email, password } = req.body;
-  Client.findOne({email,password}, (err,doc)=>{
-    if(err){
-      res.sendStatus(500);
-      return;
+//This post is to check if the email exist
+app.post('/',async (req, res) => {
+  let {email,password}=req.body
+  try{
+    const check=await Client.findOne({email:email})
+    if(check){
+      res.json("Found");
     }
-    res.sendStatus({id:doc._id})
-  });
+    else{
+      res.send("Does not exist")
+    }
+  }catch(e){
+    res.json("Does not exist")
+  }
+  // Client.findOne({email,password}, (err,doc)=>{
+  //   if(err){
+  //     res.sendStatus(500);
+  //     return;
+  //   }
+  //   res.sendStatus({id:doc._id})
+  // });
 
 });
 
-app.post('/signup', (req, res) => {
-  let { email, password } = req.body;
-  let newClient = new Client({ email, password });
-  newClient.save((err, client)=>{
-    res.send({message:`User created with ID: ${user._id}`})
-  });
+// app.post('/login',async (req, res) => {
+//   let {email,password}=req.body
+//   try{
+//     const check=await Client.findOne({email:email})
+//     if(check){
+//       res.json("Found");
+//       res.render("home");
+//     }
+//     else{
+//       res.send("Does not exist")
+//     }
+//   }catch(e){
+//     res.json("Not found")
+//   }
+//   // Client.findOne({email,password}, (err,doc)=>{
+//   //   if(err){
+//   //     res.sendStatus(500);
+//   //     return;
+//   //   }
+//   //   res.sendStatus({id:doc._id})
+//   // });
+
+// });
+
+app.post('/signup', async(req, res) => {
+  const{email,password}=req.body
+  const data={
+    email:email,
+    password:password
+  }
+
+  try{
+    const check=await Client.findOne({email:email})
+    if(check){
+      res.json("Found");
+    }
+    else{
+      res.send("Does not exist")
+      await Client.insertMany([data]);
+    }
+  }catch(e){
+    res.json("Not found")
+  }
+  
+  res.render("home");
+  // let { email, password } = req.body;
+  // let newClient = new Client({ email, password });
+  // newClient.save((err, client)=>{
+  //   res.send({message:`User created with ID: ${user._id}`})
+  // });
 });
+
+app.listen(8000,()=> {
+    console.log("server has started");
+});
+
+
 
 //THIS IS FOR PLAID
 // const moment = require ('moment');
@@ -149,8 +199,3 @@ app.post('/signup', (req, res) => {
 //       // handle error
 //     }
 //   });
-
-
-app.listen(8000,()=> {
-    console.log("server has started");
-});

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Redirect} from "react-router";
-import { connect } from 'react-redux';
+
+// import {Redirect} from "react-router";
+// import { connect } from 'react-redux';
 
 class LoginPage extends Component {
     constructor(props) {
@@ -23,9 +24,29 @@ class LoginPage extends Component {
         }, () => console.log(this.state));
     }
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
         event.preventDefault();
         const { email, password } = this.state;
+        try{
+            await axios.post("http://localhost:8000/",{
+                email,password
+            })
+            .then(res=>{
+                if(res.data==="Found"){
+                    this.props.history("/home",{state:{id:email}})
+                }
+                else if(res.data==="Does not exist"){
+                    alert("User has not signed up yet")
+                }
+            })
+            .catch(e=>{
+                alert("wrong details")
+                console.log(e);
+            })
+        }
+        catch(event){
+            console.log(event);
+        }
         // Handle form submission logic here
     }
     
