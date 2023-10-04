@@ -10,6 +10,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 axios.defaults.baseURL = "http://localhost:8000"
 
+const cardData = {
+    cardNumber: '1234 5678 9012 3456',
+    expirationDate: '12/24',
+    cardholderName: 'John Doe',
+  };
+
 function App(){
     return (
         <div className='App'>
