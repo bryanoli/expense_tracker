@@ -16,13 +16,13 @@ app.get("/",cors(), (req,res)=>{
 
 })
 
-app.get("/", (req,res)=>{
-  res.render("login");
-})
+// app.get("/", (req,res)=>{
+//   res.render("login");
+// })
 
-app.get("/signup", (req,res)=>{
-  res.render("signup");
-})
+// app.get("/signup", (req,res)=>{
+//   res.render("signup");
+// })
 
 //This post is to check if the email exist
 app.post('/',async (req, res) => {

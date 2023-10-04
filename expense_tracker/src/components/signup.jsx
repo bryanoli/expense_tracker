@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom"
+// import {Redirect} from "react-router";
+// import { connect } from 'react-redux';
+
 
 function SignupPage() {
     const [email, setEmail] = useState('');
@@ -38,24 +41,27 @@ function SignupPage() {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email:</label>
+                <div className='mb-3'>
+                    <label className='form-label'>Email:</label>
                     <input
                         type="email"
+                        className='form-control'
                         value={email}
                         onChange={handleEmailChange}
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label className='form-label'>Password:</label>
                     <input
                         type="password"
+                        className='form-control'
                         value={password}
                         onChange={handlePasswordChange}
                     />
                 </div>
-                <button type="submit">Sign up</button>
+                <button type="submit" className='btn btn-primary'>Sign up</button>
             </form>
+            <p>If you are not registered, please <a href="/">Login</a></p>
         </div>
     );
 }
